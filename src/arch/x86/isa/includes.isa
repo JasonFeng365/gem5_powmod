@@ -52,6 +52,7 @@ output header {{
 #include <iostream>
 #include <sstream>
 
+#include "arch/x86/insts/powmod_microop.hh" // @powmod
 #include "arch/generic/debugfaults.hh"
 #include "arch/x86/emulenv.hh"
 #include "arch/x86/insts/decode_fault.hh"
