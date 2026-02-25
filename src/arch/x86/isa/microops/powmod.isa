@@ -1,7 +1,7 @@
 let {{
     # Define powmod micro-op
     # This class tells gem5 how to instantiate our C++ micro-op
-    class Int32PowmodMicroop(X86Microop):
+    class Int32Powmod(X86Microop):
         # Constructor - no arguments needed since the register comes from ModRM
         def __init__(self):
             pass
@@ -13,7 +13,7 @@ let {{
             #   macrocodeBlock: name of the containing macroop
             #   microFlags: flags like IsLastMicroop, IsFirstMicroop
             #   0: memory request flags (none needed)
-            return "new X86ISA::Int32PowmodMicroop(machInst, macrocodeBlock, %s, 0)" % \
+            return "new X86ISA::Int32Powmod(machInst, macrocodeBlock, %s, 0)" % \
                     self.microFlagsText(microFlags)
 
     # Register this class under the name "int32_powmod"
