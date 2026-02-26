@@ -1,4 +1,4 @@
-#include "arch/x86/insts/m4_microop.hh" // class declarations for M4 micro-ops
+#include "arch/x86/insts/powmod_microop.hh" // class declarations for M4 micro-ops
 
 #include "arch/x86/memhelpers.hh"   // initiateMemRead / initiateMemWrite helpers
 #include "arch/x86/regs/int.hh"     // int_reg::MicroBegin for dep reg selection
@@ -24,13 +24,6 @@
 #include "debug/PowmodAccel.hh"  // Generated from DebugFlag declaration
 
 
-// struct Int32PowmodState {
-// 	int32_t n;
-// 	int32_t k;
-// 	int32_t m;
-// };
-
-// Int32PowmodState state;
 
 // Preconditions
 // k, m >= 0

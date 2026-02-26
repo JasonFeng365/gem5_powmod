@@ -1,5 +1,5 @@
-#ifndef __ARCH_X86_INSTS_M4_MACROOP_HH__
-#define __ARCH_X86_INSTS_M4_MACROOP_HH__
+#ifndef __ARCH_X86_INSTS_POWMOD_MACROOP_HH__
+#define __ARCH_X86_INSTS_POWMOD_MACROOP_HH__
 
 #include "arch/x86/memhelpers.hh"   // initiateMemRead / initiateMemWrite helpers
 #include "arch/x86/regs/int.hh"     // int_reg::MicroBegin for dep reg selection

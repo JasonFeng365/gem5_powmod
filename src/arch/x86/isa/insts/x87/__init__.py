@@ -42,7 +42,7 @@ categories = [
     "stack_management",
     "no_operation",
     "control",
-    "powmod"
+    "powmod",
 ]
 
 microcode = """
