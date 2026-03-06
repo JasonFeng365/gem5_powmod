@@ -87,21 +87,31 @@ Int32PowmodMicroop::execute(ExecContext *xc, trace::InstRecord *traceData) const
 	DPRINTF(PowmodAccel, "ATOMIC INT32 Entered execute\n");
 	// Atomic path (SimpleCPU) - do everything here
 	const Addr addr = xc->getRegOperand(this, 1);
-	std::array<uint8_t, 64> buf;
-	std::vector<bool> byte_enable(64, true);
-	Fault fault = xc->readMem(addr, buf.data(), 64, memFlags, byte_enable);
+	std::array<uint8_t, 16> buf;
+	std::vector<bool> byte_enable(16, true);
+	Fault fault = xc->readMem(addr, buf.data(), 16, memFlags, byte_enable);
 	if (fault != NoFault)
 		return fault;
 
 	// Copy data from buf into a struct int32_state
 	struct int32_state state;
-	memcpy(&state, &buf, sizeof(int32_t)*3);
+	memcpy(&state, &buf, sizeof(int32_t)*4);
 
 	DPRINTF(PowmodAccel, "ATOMIC INT32 Finished loading state: %d, %d, %d\n", state.n, state.k, state.m);
 
-	int32_t res = int32_compute(state.n, state.k, state.m);
+	state.res = int32_compute(state.n, state.k, state.m);
 
-	DPRINTF(PowmodAccel, "ATOMIC INT32 %d^%d %% %d = %d\n", state.n, state.k, state.m, res);
+	DPRINTF(PowmodAccel, "ATOMIC INT32 %d^%d %% %d = %d\n", state.n, state.k, state.m, state.res);
+	
+	uint8_t *outbuf = (uint8_t *)malloc(16);
+	memcpy(&outbuf[0], &state.n, 4);
+	memcpy(&outbuf[4], &state.k, 4);
+	memcpy(&outbuf[8], &state.m, 4);
+	memcpy(&outbuf[12], &state.res, 4);
+
+	fault = xc->writeMem(outbuf, 16, addr, memFlags, nullptr, byte_enable);
+	if (fault != NoFault)
+		return fault;
 
 	// Write dep_reg to create RAW dependency edge (value doesn't matter)
 	xc->setRegOperand(this, 0, xc->getRegOperand(this, 0));
@@ -113,7 +123,7 @@ Int32PowmodMicroop::initiateAcc(ExecContext *xc, trace::InstRecord *traceData) c
 {
 	// Timing path - just start the memory request
 	const Addr addr = xc->getRegOperand(this, 1);
-	return initiateMemRead(xc, traceData, addr, 64, memFlags);
+	return initiateMemRead(xc, traceData, addr, 12, memFlags);
 }
 
 Fault

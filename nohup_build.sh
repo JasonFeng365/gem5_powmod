@@ -1,1 +1,1 @@
-nohup bash x86build.sh 2&>1 > log.out &
+nohup bash x86build.sh > log.out 2>&1 &

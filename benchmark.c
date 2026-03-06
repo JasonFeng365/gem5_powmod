@@ -10,7 +10,7 @@
 #define end_rec m5_dump_stats(0, 0);
 
 struct int32_state {
-	int32_t n, k, m;
+	int32_t n, k, m, res;
 };
 
 
@@ -52,8 +52,9 @@ int main(void)
 	// float *A = (float *)aligned_alloc(64, bytes);
 	
 	// n, k, m
-	struct int32_state state = {2, 10, 1000000007};
+	struct int32_state state = {2, 10, 1000000007, 0};
 	powmod_int32(&state);
+	fprintf(stderr, "%d^%d %% %d = %d\n", state.n, state.k, state.m, state.res);
 
 
 	
