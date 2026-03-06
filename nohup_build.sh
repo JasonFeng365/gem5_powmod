@@ -1,0 +1,1 @@
+nohup bash x86build.sh 2&>1 > log.out &
