@@ -20,6 +20,10 @@
 #include "cpu/exec_context.hh"
 #include "arch/x86/insts/microop_args.hh"
 
+struct int32_state {
+	int32_t n, k, m;
+};
+
 
 namespace gem5 {
 namespace X86ISA {

@@ -64,8 +64,6 @@ Int32PowmodMicroop::Int32PowmodMicroop(ExtMachInst machInst,
         reinterpret_cast<RegIdArrayPtr>(&Int32PowmodMicroop::m4SrcRegIdx),
         reinterpret_cast<RegIdArrayPtr>(&Int32PowmodMicroop::m4DestRegIdx));
 
-		
-
     // Now we read TWO registers and write ONE
     _numSrcRegs = 2;
     _numDestRegs = 1;
@@ -86,6 +84,7 @@ Int32PowmodMicroop::Int32PowmodMicroop(ExtMachInst machInst,
 Fault
 Int32PowmodMicroop::execute(ExecContext *xc, trace::InstRecord *traceData) const
 {
+	DPRINTF(PowmodAccel, "ATOMIC INT32 Entered execute\n");
 	// Atomic path (SimpleCPU) - do everything here
 	const Addr addr = xc->getRegOperand(this, 1);
 	std::array<uint8_t, 64> buf;
@@ -94,18 +93,15 @@ Int32PowmodMicroop::execute(ExecContext *xc, trace::InstRecord *traceData) const
 	if (fault != NoFault)
 		return fault;
 
-	// TODO: Copy buf into accelerator state, trigger computation if ready
-	// std::array<float, 16> floats;
-	// #pragma unroll  
-	// for (size_t i = 0; i < 16; ++i) {
-	// 	memcpy(&floats[i], &buf[4*i], 4);
-	// 	DPRINTF(PowmodAccel, "%d = %f, from %d %d %d %d\n", i, floats[i], buf[4*i], buf[4*i+1], buf[4*i+2], buf[4*i+3]);
-	// }
+	// Copy data from buf into a struct int32_state
+	struct int32_state state;
+	memcpy(&state, &buf, sizeof(int32_t)*3);
 
-	// DPRINTF(PowmodAccel, "ATOMIC Finished loading floats to A\n");
+	DPRINTF(PowmodAccel, "ATOMIC INT32 Finished loading state: %d, %d, %d\n", state.n, state.k, state.m);
 
-	// state.aQueue.push_back(std::move(floats));
+	int32_t res = int32_compute(state.n, state.k, state.m);
 
+	DPRINTF(PowmodAccel, "ATOMIC INT32 %d^%d %% %d = %d\n", state.n, state.k, state.m, res);
 
 	// Write dep_reg to create RAW dependency edge (value doesn't matter)
 	xc->setRegOperand(this, 0, xc->getRegOperand(this, 0));
