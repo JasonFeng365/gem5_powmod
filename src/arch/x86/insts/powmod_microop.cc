@@ -24,6 +24,8 @@
 #include "debug/PowmodAccel.hh"  // Generated from DebugFlag declaration
 
 
+#define COMPLETE_MODE_READY_TO_COMPUTE true
+#define COMPLETE_MODE_FINISHED_COMPUTING false
 
 // Preconditions
 // k, m >= 0
@@ -97,6 +99,20 @@ Int32PowmodMicroop::execute(ExecContext *xc, trace::InstRecord *traceData) const
 	struct int32_state state;
 	memcpy(&state, &buf, sizeof(int32_t)*4);
 
+	
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[0]);
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[1]);
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[2]);
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[3]);
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[4]);
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[5]);
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[6]);
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[7]);
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[8]);
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[9]);
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[10]);
+	DPRINTF(PowmodAccel, "ATOMIC DATA LOADED: %d\n", buf[11]);
+
 	DPRINTF(PowmodAccel, "ATOMIC INT32 Finished loading state: %d, %d, %d\n", state.n, state.k, state.m);
 
 	state.res = int32_compute(state.n, state.k, state.m);
@@ -123,34 +139,101 @@ Int32PowmodMicroop::initiateAcc(ExecContext *xc, trace::InstRecord *traceData) c
 {
 	// Timing path - just start the memory request
 	const Addr addr = xc->getRegOperand(this, 1);
-	return initiateMemRead(xc, traceData, addr, 12, memFlags);
+	return initiateMemRead(xc, traceData, addr, 16, memFlags);
 }
 
+bool int32_completeAccMode = COMPLETE_MODE_READY_TO_COMPUTE;
 Fault
 Int32PowmodMicroop::completeAcc(PacketPtr pkt, ExecContext *xc,
 		trace::InstRecord *traceData) const
 {
-	// Timing path - memory response arrived
-	const uint8_t *data = pkt->getConstPtr<uint8_t>();
-
-	// TODO: Copy buf into accelerator state, trigger computation if ready
-	// std::array<float, 16> floats;
-	// #pragma unroll
-	// for (size_t i = 0; i < 16; ++i) {
-	// 	memcpy(&floats[i], &data[4*i], 4);
-	// }
-
-
-	// state.aQueue.push_back(std::move(floats));
-
-
 	
-	// In your completeAcc:
+	if (int32_completeAccMode == COMPLETE_MODE_FINISHED_COMPUTING) {
+		// If we finished computation, that means that the current call was triggered by the writeback
+		// Then, we do nothing!
+		int32_completeAccMode = !int32_completeAccMode;
 
-	// Write dep_reg to create RAW dependency edge (value doesn't matter)
-	xc->setRegOperand(this, 0, xc->getRegOperand(this, 0));
+		DPRINTF(PowmodAccel, "TIMING INT32 Entered execute, finished computation\n");
+
+		return NoFault;
+		
+	} else {	// COMPLETE_MODE_READY_TO_COMPUTE
+		// If we're just ready to compute, then we run the full computation
+		int32_completeAccMode = !int32_completeAccMode;
+		
+		
+		const Addr addr = xc->getRegOperand(this, 1);
+
+
+		DPRINTF(PowmodAccel, "TIMING INT32 Entered execute, ready to compute\n");
+		// Timing path - memory response arrived
+		const uint8_t *data = pkt->getConstPtr<uint8_t>();
+
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[0]);
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[1]);
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[2]);
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[3]);
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[4]);
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[5]);
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[6]);
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[7]);
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[8]);
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[9]);
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[10]);
+		DPRINTF(PowmodAccel, "TIMING DATA LOADED: %d\n", data[11]);
+
+		// Copy data from buf into a struct int32_state
+		struct int32_state state;
+		memcpy(&state, data, sizeof(int32_t)*4);
+
+		DPRINTF(PowmodAccel, "TIMING INT32 Finished loading state: %d, %d, %d\n", state.n, state.k, state.m);
+
+		state.res = int32_compute(state.n, state.k, state.m);
+
+		DPRINTF(PowmodAccel, "TIMING INT32 %d^%d %% %d = %d\n", state.n, state.k, state.m, state.res);
+		
+		uint8_t *outbuf = (uint8_t *)malloc(16);
+		memcpy(&outbuf[0], &state.n, 4);
+		memcpy(&outbuf[4], &state.k, 4);
+		memcpy(&outbuf[8], &state.m, 4);
+		memcpy(&outbuf[12], &state.res, 4);
+
+
+		// How do we write this back, without triggering another call to completeAcc?
+		// Maybe just an internal "mode" flag that switches back and forth
+
+		// TODO: Copy buf into accelerator state, trigger computation if ready
+		// std::array<float, 16> floats;
+		// #pragma unroll
+		// for (size_t i = 0; i < 16; ++i) {
+		// 	memcpy(&floats[i], &data[4*i], 4);
+		// }
+
+
+		// state.aQueue.push_back(std::move(floats));
+
+
+		
+		// In your completeAcc:
+		
+		// Write dep_reg to create RAW dependency edge (value doesn't matter)
+		xc->setRegOperand(this, 0, xc->getRegOperand(this, 0));
+		
+		
+		DPRINTF(PowmodAccel, "TIMING start writeMem\n");
+		std::vector<bool> byte_enable(16, true);
+		Fault fault = xc->writeMem(outbuf, 16, addr, memFlags, nullptr, byte_enable);
+		if (fault != NoFault)
+			return fault;
+
+		DPRINTF(PowmodAccel, "TIMING after writeMem\n");
+
+		// Write dep_reg to create RAW dependency edge (value doesn't matter)
+		xc->setRegOperand(this, 0, xc->getRegOperand(this, 0));
+		
+		return NoFault;
+	}
 	
-	return NoFault;
 }
 
 }
