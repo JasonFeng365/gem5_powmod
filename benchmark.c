@@ -10,7 +10,7 @@
 #define end_rec m5_dump_stats(0, 0);
 
 struct int32_state {
-	int32_t n, k, m, res;
+	int32_t n, k, m;
 };
 
 
@@ -20,29 +20,30 @@ struct int32_state {
 
 
 // int32_t powmod
-static inline void powmod_int32(const struct int32_state *ptr)
+static inline void start_powmod_int32(const struct int32_state *ptr)
 {
-	fprintf(stderr, "Inside powmod_int32\n");
-    asm volatile (".byte 0xDA, 0xE0" : : "a"(ptr) : "memory");
+	fprintf(stderr, "Inside start_powmod_int32\n");
+	asm volatile (".byte 0xDA, 0xE0" : : "a"(ptr) : "memory");
 }
 
 
-static inline void m4_loadb(const float *ptr)
+static inline void save_powmod_int32(const int32_t *ptr)
 {
-    asm volatile (".byte 0xDD, 0xCE" : : "S"(ptr) : "memory");
+	fprintf(stderr, "Inside save_powmod_int32\n");
+	asm volatile (".byte 0xDA, 0xF9" : : "c"(ptr) : "memory");
 }
 
 
-static inline void m4_loadout(const float *ptr)
-{
-    asm volatile (".byte 0xDA, 0xF9" : : "c"(ptr) : "memory");
-}
+// static inline void m4_loadb(const float *ptr)
+// {
+// 	asm volatile (".byte 0xDD, 0xCE" : : "S"(ptr) : "memory");
+// }
 
 
-static inline void m4_storeout(float *ptr)
-{
-    asm volatile (".byte 0xDD, 0xF2" : : "d"(ptr) : "memory");
-}
+// static inline void m4_storeout(float *ptr)
+// {
+// 	asm volatile (".byte 0xDD, 0xF2" : : "d"(ptr) : "memory");
+// }
 
 
 
@@ -52,9 +53,12 @@ int main(void)
 	// float *A = (float *)aligned_alloc(64, bytes);
 	
 	// n, k, m
-	struct int32_state state = {2, 10, 1000000007, 0};
-	powmod_int32(&state);
-	fprintf(stderr, "%d^%d %% %d = %d\n", state.n, state.k, state.m, state.res);
+	struct int32_state state = {2, 10, 1000000007};
+	start_powmod_int32(&state);
+	
+	int32_t* res = malloc(4);
+	save_powmod_int32(res);
+	fprintf(stderr, "%d^%d %% %d = %d\n", state.n, state.k, state.m, res[0]);
 
 
 	

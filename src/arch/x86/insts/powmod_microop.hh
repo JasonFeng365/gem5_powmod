@@ -20,15 +20,17 @@
 #include "cpu/exec_context.hh"
 #include "arch/x86/insts/microop_args.hh"
 
-struct int32_state {
-	int32_t n, k, m, res;
+
+
+struct int32_input {
+	int32_t n, k, m;
 };
 
 
 namespace gem5 {
 namespace X86ISA {
 
-class Int32PowmodMicroop : public X86MicroopBase
+class StartInt32PowmodMicroop : public X86MicroopBase
 {
   private:
     static constexpr int NumSrcRegs = 2;
@@ -40,7 +42,30 @@ class Int32PowmodMicroop : public X86MicroopBase
     Request::FlagsType memFlags;
 
   public:
-    Int32PowmodMicroop(ExtMachInst machInst, const char *inst_mnem,
+    StartInt32PowmodMicroop(ExtMachInst machInst, const char *inst_mnem,
+            uint64_t setFlags, Request::FlagsType mem_flags);
+
+    Fault execute(ExecContext *xc, trace::InstRecord *traceData) const override;
+    Fault initiateAcc(ExecContext *xc,
+            trace::InstRecord *traceData) const override;
+    Fault completeAcc(PacketPtr pkt, ExecContext *xc,
+            trace::InstRecord *traceData) const override;
+};
+
+
+class SaveInt32PowmodMicroop : public X86MicroopBase
+{
+  private:
+    static constexpr int NumSrcRegs = 2;
+    static constexpr int NumDestRegs = 1;
+
+    RegId m4SrcRegIdx[NumSrcRegs];
+    RegId m4DestRegIdx[NumDestRegs];
+
+    Request::FlagsType memFlags;
+
+  public:
+    SaveInt32PowmodMicroop(ExtMachInst machInst, const char *inst_mnem,
             uint64_t setFlags, Request::FlagsType mem_flags);
 
     Fault execute(ExecContext *xc, trace::InstRecord *traceData) const override;
