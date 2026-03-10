@@ -33,7 +33,9 @@ namespace X86ISA {
 class StartInt32PowmodMicroop : public X86MicroopBase
 {
   private:
-    static constexpr int NumSrcRegs = 2;
+//   Read n, k, m
+//   Write res
+    static constexpr int NumSrcRegs = 3;
     static constexpr int NumDestRegs = 1;
 
     RegId m4SrcRegIdx[NumSrcRegs];
