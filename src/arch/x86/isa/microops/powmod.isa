@@ -1,23 +1,23 @@
 let {{
-    class StartInt32Powmod(X86Microop):
-        className = "StartInt32PowmodMicroop"
+    class UInt64Powmod(X86Microop):
+        className = "UInt64PowmodMicroop"
         def __init__(self):
             pass
 
         def getAllocator(self, microFlags):
-            return "new X86ISA::StartInt32PowmodMicroop(machInst, macrocodeBlock, %s, 0)" % \
+            return "new X86ISA::UInt64PowmodMicroop(machInst, macrocodeBlock, %s, 0)" % \
                     self.microFlagsText(microFlags)
 
-    microopClasses["start_int32_powmod"] = StartInt32Powmod
+    microopClasses["uint64_powmod"] = UInt64Powmod
 
-    class SaveInt32Powmod(X86Microop):
-        className = "SaveInt32PowmodMicroop"
+    class DoublePow(X86Microop):
+        className = "DoublePowMicroop"
         def __init__(self):
             pass
 
         def getAllocator(self, microFlags):
-            return "new X86ISA::SaveInt32PowmodMicroop(machInst, macrocodeBlock, %s, 0)" % \
+            return "new X86ISA::DoublePowMicroop(machInst, macrocodeBlock, %s, 0)" % \
                     self.microFlagsText(microFlags)
 
-    microopClasses["save_int32_powmod"] = SaveInt32Powmod
+    microopClasses["double_pow"] = DoublePow
 }};

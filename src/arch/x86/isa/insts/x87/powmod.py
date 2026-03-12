@@ -1,12 +1,12 @@
 microcode = """
-def macroop START_INT32_POWMOD_R
+def macroop UINT64_POWMOD_R
 {
     .adjust_env oszIn64Override
-    start_int32_powmod
+    uint64_powmod
 };
-def macroop SAVE_INT32_POWMOD_R
+def macroop DOUBLE_POW_R
 {
     .adjust_env oszIn64Override
-    save_int32_powmod
+    double_pow
 };
 """

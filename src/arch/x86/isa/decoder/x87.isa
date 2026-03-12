@@ -128,7 +128,7 @@ format WarnUnimpl {
             }
             0x4: decode MODRM_MOD {
                 //0x3: Inst::UD2();
-                0x3: Inst::START_INT32_POWMOD(Rq);
+                0x3: Inst::UINT64_POWMOD(Rq);
                 default: fisub();
             }
             0x5: decode MODRM_MOD {
@@ -143,7 +143,7 @@ format WarnUnimpl {
             }
             0x7: decode MODRM_MOD {
                 //0x3: Inst::UD2();
-                0x3: Inst::SAVE_INT32_POWMOD(Rq);
+                0x3: Inst::DOUBLE_POW(Rq);
                 default: fidivr();
             }
         }

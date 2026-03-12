@@ -36,9 +36,12 @@ BUILD_TLM not set, not building CHI-TLM integration
 
 scons: done reading SConscript files.
 scons: Building targets ...
- [ISA DESC] src/arch/x86/isa/main.isa -> X86/arch/x86/generated/decoder-g.cc.inc, X86/arch/x86/generated/decoder-ns.cc.inc, X86/arch/x86/generated/decode-method.cc.inc, X86/arch/x86/generated/decoder.hh, X86/arch/x86/generated/decoder-g.hh.inc, X86/arch/x86/generated/decoder-ns.hh.inc, X86/arch/x86/generated/exec-g.cc.inc, X86/arch/x86/generated/exec-ns.cc.inc, X86/arch/x86/generated/decoder.cc, X86/arch/x86/generated/inst-constrs.cc, X86/arch/x86/generated/generic_cpu_exec.cc
+ [     CXX] src/arch/x86/faults.cc -> X86/arch/x86/faults.o
+ [     CXX] src/arch/x86/insts/badmicroop.cc -> X86/arch/x86/insts/badmicroop.o
  [     CXX] src/arch/x86/insts/powmod_microop.cc -> X86/arch/x86/insts/powmod_microop.o
-Generating LALR tables
+ [     CXX] X86/arch/x86/generated/decoder.cc -> .o
+ [     CXX] X86/arch/x86/generated/inst-constrs.cc -> .o
+ [     CXX] X86/arch/x86/generated/generic_cpu_exec.cc -> .o
 In file included from src/arch/x86/insts/powmod_microop.hh:4,
                  from src/arch/x86/insts/powmod_microop.cc:1:
 src/arch/x86/memhelpers.hh:218:1: warning: ‘gem5::Fault gem5::X86ISA::writeMemAtomic(gem5::ExecContext*, gem5::trace::InstRecord*, uint64_t, unsigned int, gem5::Addr, gem5::Request::Flags, uint64_t*)’ defined but not used [-Wunused-function]
@@ -53,7 +56,87 @@ src/arch/x86/memhelpers.hh:109:1: warning: ‘gem5::Fault gem5::X86ISA::readMemA
 src/arch/x86/memhelpers.hh:56:1: warning: ‘void gem5::X86ISA::getMem(gem5::PacketPtr, uint64_t&, unsigned int, gem5::trace::InstRecord*)’ defined but not used [-Wunused-function]
    56 | getMem(PacketPtr pkt, uint64_t &mem, unsigned dataSize,
       | ^~~~~~
+src/arch/x86/memhelpers.hh:48:1: warning: ‘gem5::Fault gem5::X86ISA::initiateMemRead(gem5::ExecContext*, gem5::trace::InstRecord*, gem5::Addr, unsigned int, gem5::Request::Flags)’ defined but not used [-Wunused-function]
+   48 | initiateMemRead(ExecContext *xc, trace::InstRecord *traceData, Addr addr,
+      | ^~~~~~~~~~~~~~~
+In file included from src/arch/x86/insts/powmod_microop.hh:4,
+                 from build/X86/arch/x86/generated/decoder-g.hh.inc:12,
+                 from build/X86/arch/x86/generated/decoder.hh:8,
+                 from src/arch/x86/insts/badmicroop.cc:41:
+src/arch/x86/memhelpers.hh:218:1: warning: ‘gem5::Fault gem5::X86ISA::writeMemAtomic(gem5::ExecContext*, gem5::trace::InstRecord*, uint64_t, unsigned int, gem5::Addr, gem5::Request::Flags, uint64_t*)’ defined but not used [-Wunused-function]
+  218 | writeMemAtomic(ExecContext *xc, trace::InstRecord *traceData, uint64_t mem,
+      | ^~~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:186:1: warning: ‘gem5::Fault gem5::X86ISA::writeMemTiming(gem5::ExecContext*, gem5::trace::InstRecord*, uint64_t, unsigned int, gem5::Addr, gem5::Request::Flags, uint64_t*)’ defined but not used [-Wunused-function]
+  186 | writeMemTiming(ExecContext *xc, trace::InstRecord *traceData, uint64_t mem,
+      | ^~~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:109:1: warning: ‘gem5::Fault gem5::X86ISA::readMemAtomic(gem5::ExecContext*, gem5::trace::InstRecord*, gem5::Addr, uint64_t&, unsigned int, gem5::Request::Flags)’ defined but not used [-Wunused-function]
+  109 | readMemAtomic(ExecContext *xc, trace::InstRecord *traceData, Addr addr,
+      | ^~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:56:1: warning: ‘void gem5::X86ISA::getMem(gem5::PacketPtr, uint64_t&, unsigned int, gem5::trace::InstRecord*)’ defined but not used [-Wunused-function]
+   56 | getMem(PacketPtr pkt, uint64_t &mem, unsigned dataSize,
+      | ^~~~~~
+src/arch/x86/memhelpers.hh:48:1: warning: ‘gem5::Fault gem5::X86ISA::initiateMemRead(gem5::ExecContext*, gem5::trace::InstRecord*, gem5::Addr, unsigned int, gem5::Request::Flags)’ defined but not used [-Wunused-function]
+   48 | initiateMemRead(ExecContext *xc, trace::InstRecord *traceData, Addr addr,
+      | ^~~~~~~~~~~~~~~
+In file included from src/arch/x86/insts/powmod_microop.hh:4,
+                 from build/X86/arch/x86/generated/decoder-g.hh.inc:12,
+                 from build/X86/arch/x86/generated/decoder.hh:8,
+                 from src/arch/x86/faults.cc:43:
+src/arch/x86/memhelpers.hh:218:1: warning: ‘gem5::Fault gem5::X86ISA::writeMemAtomic(gem5::ExecContext*, gem5::trace::InstRecord*, uint64_t, unsigned int, gem5::Addr, gem5::Request::Flags, uint64_t*)’ defined but not used [-Wunused-function]
+  218 | writeMemAtomic(ExecContext *xc, trace::InstRecord *traceData, uint64_t mem,
+      | ^~~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:186:1: warning: ‘gem5::Fault gem5::X86ISA::writeMemTiming(gem5::ExecContext*, gem5::trace::InstRecord*, uint64_t, unsigned int, gem5::Addr, gem5::Request::Flags, uint64_t*)’ defined but not used [-Wunused-function]
+  186 | writeMemTiming(ExecContext *xc, trace::InstRecord *traceData, uint64_t mem,
+      | ^~~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:109:1: warning: ‘gem5::Fault gem5::X86ISA::readMemAtomic(gem5::ExecContext*, gem5::trace::InstRecord*, gem5::Addr, uint64_t&, unsigned int, gem5::Request::Flags)’ defined but not used [-Wunused-function]
+  109 | readMemAtomic(ExecContext *xc, trace::InstRecord *traceData, Addr addr,
+      | ^~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:56:1: warning: ‘void gem5::X86ISA::getMem(gem5::PacketPtr, uint64_t&, unsigned int, gem5::trace::InstRecord*)’ defined but not used [-Wunused-function]
+   56 | getMem(PacketPtr pkt, uint64_t &mem, unsigned dataSize,
+      | ^~~~~~
+src/arch/x86/memhelpers.hh:48:1: warning: ‘gem5::Fault gem5::X86ISA::initiateMemRead(gem5::ExecContext*, gem5::trace::InstRecord*, gem5::Addr, unsigned int, gem5::Request::Flags)’ defined but not used [-Wunused-function]
+   48 | initiateMemRead(ExecContext *xc, trace::InstRecord *traceData, Addr addr,
+      | ^~~~~~~~~~~~~~~
  [VER TAGS]  -> X86/sim/tags.cc
- [     CXX] src/base/date.cc -> X86/base/date.o
- [    LINK]  -> X86/gem5.opt
-scons: done building targets.
+In file included from src/arch/x86/insts/powmod_microop.hh:4,
+                 from build/X86/arch/x86/generated/decoder-g.hh.inc:12,
+                 from build/X86/arch/x86/generated/decoder.hh:8,
+                 from build/X86/arch/x86/generated/decoder.cc:7:
+src/arch/x86/memhelpers.hh:218:1: warning: ‘gem5::Fault gem5::X86ISA::writeMemAtomic(gem5::ExecContext*, gem5::trace::InstRecord*, uint64_t, unsigned int, gem5::Addr, gem5::Request::Flags, uint64_t*)’ defined but not used [-Wunused-function]
+  218 | writeMemAtomic(ExecContext *xc, trace::InstRecord *traceData, uint64_t mem,
+      | ^~~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:186:1: warning: ‘gem5::Fault gem5::X86ISA::writeMemTiming(gem5::ExecContext*, gem5::trace::InstRecord*, uint64_t, unsigned int, gem5::Addr, gem5::Request::Flags, uint64_t*)’ defined but not used [-Wunused-function]
+  186 | writeMemTiming(ExecContext *xc, trace::InstRecord *traceData, uint64_t mem,
+      | ^~~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:109:1: warning: ‘gem5::Fault gem5::X86ISA::readMemAtomic(gem5::ExecContext*, gem5::trace::InstRecord*, gem5::Addr, uint64_t&, unsigned int, gem5::Request::Flags)’ defined but not used [-Wunused-function]
+  109 | readMemAtomic(ExecContext *xc, trace::InstRecord *traceData, Addr addr,
+      | ^~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:56:1: warning: ‘void gem5::X86ISA::getMem(gem5::PacketPtr, uint64_t&, unsigned int, gem5::trace::InstRecord*)’ defined but not used [-Wunused-function]
+   56 | getMem(PacketPtr pkt, uint64_t &mem, unsigned dataSize,
+      | ^~~~~~
+src/arch/x86/memhelpers.hh:48:1: warning: ‘gem5::Fault gem5::X86ISA::initiateMemRead(gem5::ExecContext*, gem5::trace::InstRecord*, gem5::Addr, unsigned int, gem5::Request::Flags)’ defined but not used [-Wunused-function]
+   48 | initiateMemRead(ExecContext *xc, trace::InstRecord *traceData, Addr addr,
+      | ^~~~~~~~~~~~~~~
+In file included from src/arch/x86/insts/powmod_microop.hh:4,
+                 from build/X86/arch/x86/generated/decoder-g.hh.inc:12,
+                 from build/X86/arch/x86/generated/decoder.hh:8,
+                 from build/X86/arch/x86/generated/inst-constrs.cc:6:
+src/arch/x86/memhelpers.hh:218:1: warning: ‘gem5::Fault gem5::X86ISA::writeMemAtomic(gem5::ExecContext*, gem5::trace::InstRecord*, uint64_t, unsigned int, gem5::Addr, gem5::Request::Flags, uint64_t*)’ defined but not used [-Wunused-function]
+  218 | writeMemAtomic(ExecContext *xc, trace::InstRecord *traceData, uint64_t mem,
+      | ^~~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:186:1: warning: ‘gem5::Fault gem5::X86ISA::writeMemTiming(gem5::ExecContext*, gem5::trace::InstRecord*, uint64_t, unsigned int, gem5::Addr, gem5::Request::Flags, uint64_t*)’ defined but not used [-Wunused-function]
+  186 | writeMemTiming(ExecContext *xc, trace::InstRecord *traceData, uint64_t mem,
+      | ^~~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:109:1: warning: ‘gem5::Fault gem5::X86ISA::readMemAtomic(gem5::ExecContext*, gem5::trace::InstRecord*, gem5::Addr, uint64_t&, unsigned int, gem5::Request::Flags)’ defined but not used [-Wunused-function]
+  109 | readMemAtomic(ExecContext *xc, trace::InstRecord *traceData, Addr addr,
+      | ^~~~~~~~~~~~~
+src/arch/x86/memhelpers.hh:56:1: warning: ‘void gem5::X86ISA::getMem(gem5::PacketPtr, uint64_t&, unsigned int, gem5::trace::InstRecord*)’ defined but not used [-Wunused-function]
+   56 | getMem(PacketPtr pkt, uint64_t &mem, unsigned dataSize,
+      | ^~~~~~
+src/arch/x86/memhelpers.hh:48:1: warning: ‘gem5::Fault gem5::X86ISA::initiateMemRead(gem5::ExecContext*, gem5::trace::InstRecord*, gem5::Addr, unsigned int, gem5::Request::Flags)’ defined but not used [-Wunused-function]
+   48 | initiateMemRead(ExecContext *xc, trace::InstRecord *traceData, Addr addr,
+      | ^~~~~~~~~~~~~~~
+scons: *** [build/X86/arch/x86/generated/inst-constrs.o] Build interrupted.
+scons: Build interrupted.
+scons: building terminated because of errors.
+scons: writing .sconsign file.

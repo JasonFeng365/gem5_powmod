@@ -30,7 +30,7 @@ struct int32_input {
 namespace gem5 {
 namespace X86ISA {
 
-class StartInt32PowmodMicroop : public X86MicroopBase
+class UInt64PowmodMicroop : public X86MicroopBase
 {
   private:
 //   Read n, k, m
@@ -44,7 +44,7 @@ class StartInt32PowmodMicroop : public X86MicroopBase
     Request::FlagsType memFlags;
 
   public:
-    StartInt32PowmodMicroop(ExtMachInst machInst, const char *inst_mnem,
+    UInt64PowmodMicroop(ExtMachInst machInst, const char *inst_mnem,
             uint64_t setFlags, Request::FlagsType mem_flags);
 
     Fault execute(ExecContext *xc, trace::InstRecord *traceData) const override;
@@ -55,9 +55,11 @@ class StartInt32PowmodMicroop : public X86MicroopBase
 };
 
 
-class SaveInt32PowmodMicroop : public X86MicroopBase
+class DoublePowMicroop : public X86MicroopBase
 {
   private:
+//   Read n, k (no mod)
+//   Write res
     static constexpr int NumSrcRegs = 2;
     static constexpr int NumDestRegs = 1;
 
@@ -67,7 +69,7 @@ class SaveInt32PowmodMicroop : public X86MicroopBase
     Request::FlagsType memFlags;
 
   public:
-    SaveInt32PowmodMicroop(ExtMachInst machInst, const char *inst_mnem,
+    DoublePowMicroop(ExtMachInst machInst, const char *inst_mnem,
             uint64_t setFlags, Request::FlagsType mem_flags);
 
     Fault execute(ExecContext *xc, trace::InstRecord *traceData) const override;

@@ -33,10 +33,11 @@ static inline uint64_t uint64_powmod(uint64_t n, uint64_t k, uint64_t m)
 }
 
 
-static inline void save_powmod_int32(const int32_t *ptr)
+static inline double double_powmod(double n, uint64_t k)
 {
-	fprintf(stderr, "Inside save_powmod_int32\n");
-	asm volatile (".byte 0xDA, 0xF9" : : "c"(ptr) : "memory");
+	double res;
+	asm volatile (".byte 0xDA, 0xF9" : "=b"(res) : "a"(n), "c"(k) : );
+	return res;
 }
 
 
@@ -76,13 +77,16 @@ int main(void)
 	uint64_t res;
 	// res = uint64_powmod(2, 10, 1000000007);
 
-	uint64_t n, k, m;
-	scanf("%lu %lu %lu", &n, &k, &m);
+	// uint64_t n, k, m;
+	// scanf("%lu %lu %lu", &n, &k, &m);
+
+	fprintf(stderr, "Result = %f\n", double_powmod(2.5, 4));
 
 	start_rec;
-	res = uint64_powmod(n, k, m);
+	// res = uint64_powmod(n, k, m);
 	// res = uint64_powmod_manual(n, k, m);
 	// res = uint64_powmod_manual(51, 1186265532, 1000000007);
+
 	end_rec;
 	fprintf(stderr, "Result = %lu\n", res);
 
