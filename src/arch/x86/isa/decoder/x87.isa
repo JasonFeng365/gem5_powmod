@@ -220,7 +220,7 @@ format WarnUnimpl {
                 default: Inst::FLD(Mq);
             }
             0x1: decode MODRM_MOD {
-                0x3: Inst::UD2();
+                0x3: Inst::UINT64_FIBMOD(Rq);
                 default: fisttp();
             }
             0x2: decode MODRM_MOD {
@@ -240,6 +240,8 @@ format WarnUnimpl {
             }
             0x6: decode MODRM_MOD {
                 0x3: Inst::UD2();
+                // Replace this one with correct instruction name...
+                // 0x3: Inst::UINT64_FIBMOD(Rq);
                 default: fnsave();
             }
             0x7: decode MODRM_MOD {

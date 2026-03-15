@@ -20,4 +20,15 @@ let {{
                     self.microFlagsText(microFlags)
 
     microopClasses["double_pow"] = DoublePow
+
+    class UInt64Fibmod(X86Microop):
+        className = "UInt64FibmodMicroop"
+        def __init__(self):
+            pass
+
+        def getAllocator(self, microFlags):
+            return "new X86ISA::UInt64FibmodMicroop(machInst, macrocodeBlock, %s, 0)" % \
+                    self.microFlagsText(microFlags)
+
+    microopClasses["uint64_fibmod"] = UInt64Fibmod
 }};

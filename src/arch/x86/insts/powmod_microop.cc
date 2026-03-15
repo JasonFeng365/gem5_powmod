@@ -66,29 +66,66 @@ inline double double_pow(double n, uint64_t k) {
 	double base = n;
 
 	while (k) {
-		if (k&1) res*=base;
+		// Cycle count test: do O(n) exponentiation
+		// if (k&1) res*=base;
 
-		base *= base;
-		k>>=1;
+		// base *= base;
+		// k>>=1;
+
+		res *= n;
+		k--;
 	}
 
 	return res;
 }
 
-inline uint64_t uint64_fibmod(uint64_t n, uint64_t k, uint64_t m) {
-	uint64_t res = 1;
-	uint64_t base = n;
+inline void matmult_2_2_2(uint64_t *A, uint64_t *B, uint64_t *dst, uint64_t mod) {
+	memset(dst, 0, 4*sizeof(uint64_t));
 
-	while (k) {
-		if (k&1) res = (res*base) % m;
-
-		base = (base*base) % m;
-		k>>=1;
+	#pragma unroll
+	range(i, 0, 2, 1) {
+		#pragma unroll
+		range(j, 0, 2, 1) {
+			#pragma unroll
+			range(k, 0, 2, 1) {
+				dst[2*i + k] = (dst[2*i + k] + A[2*i + j] * B[2*j + k]) % mod;
+			}
+		}
 	}
-
-	return res;
 }
 
+inline void matmult_1_2_2(uint64_t *A, uint64_t *B, uint64_t *dst, uint64_t mod) {
+	memset(dst, 0, 2*sizeof(uint64_t));
+
+	#pragma unroll
+	range(j, 0, 2, 1) {
+		#pragma unroll
+		range(k, 0, 2, 1) {
+			dst[k] = (dst[k] + A[j] * B[2*j + k]) % mod;
+		}
+	}
+}
+
+inline uint64_t uint64_fibmod(uint64_t i, uint64_t m) {
+	uint64_t res[2] = {0, 1};
+	uint64_t base[4] = {0, 1, 1, 1};
+
+	uint64_t temp2[2];
+	uint64_t temp4[4];
+
+	while (i) {
+		if (i&1) {
+			matmult_1_2_2(res, base, temp2, m);
+			memcpy(&res, &temp2, 2*sizeof(uint64_t));
+		}
+
+		matmult_2_2_2(base, base, temp4, m);
+		memcpy(&base, &temp4, 4*sizeof(uint64_t));
+		i>>=1;
+	}
+
+	return res[0];
+}
 
 
 namespace gem5 {
@@ -265,6 +302,85 @@ DoublePowMicroop::completeAcc(PacketPtr pkt, ExecContext *xc,
 {
 	DPRINTF(PowmodAccel, "TIMING DOUBLE completeAcc\n");
 
+	return NoFault;
+}
+
+
+
+
+UInt64FibmodMicroop::UInt64FibmodMicroop(ExtMachInst machInst,
+        const char *inst_mnem, uint64_t setFlags,
+        Request::FlagsType mem_flags) :
+    X86MicroopBase(machInst, "uint64_fibmod", inst_mnem, setFlags, MemReadOp),
+    memFlags(mem_flags)
+{
+
+	const RegId i_reg(intRegClass, 0 | (machInst.rex.b << 3));
+	const RegId m_reg(intRegClass, 1 | (machInst.rex.b << 3));
+	const RegId res_reg(intRegClass, 3 | (machInst.rex.b << 3));
+
+    setRegIdxArrays(
+        reinterpret_cast<RegIdArrayPtr>(&UInt64FibmodMicroop::m4SrcRegIdx),
+        reinterpret_cast<RegIdArrayPtr>(&UInt64FibmodMicroop::m4DestRegIdx));
+
+    _numSrcRegs = 2;
+    _numDestRegs = 1;
+    _numTypedDestRegs[IntRegClass] = 1;
+
+	m4SrcRegIdx[0] = i_reg;
+	m4SrcRegIdx[1] = m_reg;
+	m4DestRegIdx[0] = res_reg;
+}
+
+
+
+// Note: getRegOperand returns uint64_t
+Fault
+UInt64FibmodMicroop::execute(ExecContext *xc, trace::InstRecord *traceData) const
+{
+	uint64_t i = xc->getRegOperand(this, 0);
+	uint64_t m = xc->getRegOperand(this, 1);
+
+	DPRINTF(PowmodAccel, "ATOMIC INT64 FIBMOD Entered execute\n");
+	DPRINTF(PowmodAccel, "ATOMIC INT64 FIBMOD Value in register 0: %" PRIu64 "\n", i);
+	DPRINTF(PowmodAccel, "ATOMIC INT64 FIBMOD Value in register 1: %" PRIu64 "\n", m);
+
+
+	uint64_t res = uint64_fibmod(i, m);
+
+	DPRINTF(PowmodAccel, "ATOMIC INT64 FIBMOD Res: %" PRIu64 "\n", res);
+
+
+	xc->setRegOperand(this, 0, res);
+
+	return NoFault;
+}
+
+Fault
+UInt64FibmodMicroop::initiateAcc(ExecContext *xc, trace::InstRecord *traceData) const
+{
+	uint64_t i = xc->getRegOperand(this, 0);
+	uint64_t m = xc->getRegOperand(this, 1);
+
+	DPRINTF(PowmodAccel, "TIMING INT64 FIBMOD Entered execute\n");
+	DPRINTF(PowmodAccel, "TIMING INT64 FIBMOD Value in register 0: %" PRIu64 "\n", i);
+	DPRINTF(PowmodAccel, "TIMING INT64 FIBMOD Value in register 1: %" PRIu64 "\n", m);
+
+
+	uint64_t res = uint64_fibmod(i, m);
+
+	DPRINTF(PowmodAccel, "TIMING INT64 FIBMOD Res: %" PRIu64 "\n", res);
+
+
+	xc->setRegOperand(this, 0, res);
+
+	return NoFault;
+}
+
+Fault
+UInt64FibmodMicroop::completeAcc(PacketPtr pkt, ExecContext *xc,
+		trace::InstRecord *traceData) const
+{
 	return NoFault;
 }
 

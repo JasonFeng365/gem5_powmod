@@ -79,6 +79,32 @@ class DoublePowMicroop : public X86MicroopBase
             trace::InstRecord *traceData) const override;
 };
 
+
+
+class UInt64FibmodMicroop : public X86MicroopBase
+{
+  private:
+//   Read i, m
+//   Write res
+    static constexpr int NumSrcRegs = 2;
+    static constexpr int NumDestRegs = 1;
+
+    RegId m4SrcRegIdx[NumSrcRegs];
+    RegId m4DestRegIdx[NumDestRegs];
+
+    Request::FlagsType memFlags;
+
+  public:
+    UInt64FibmodMicroop(ExtMachInst machInst, const char *inst_mnem,
+            uint64_t setFlags, Request::FlagsType mem_flags);
+
+    Fault execute(ExecContext *xc, trace::InstRecord *traceData) const override;
+    Fault initiateAcc(ExecContext *xc,
+            trace::InstRecord *traceData) const override;
+    Fault completeAcc(PacketPtr pkt, ExecContext *xc,
+            trace::InstRecord *traceData) const override;
+};
+
 } // namespace X86ISA
 } // namespace gem5
 

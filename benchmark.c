@@ -33,7 +33,7 @@ static inline uint64_t uint64_powmod(uint64_t n, uint64_t k, uint64_t m)
 }
 
 
-static inline double double_powmod(double n, uint64_t k)
+static inline double double_pow(double n, uint64_t k)
 {
 	double res;
 	asm volatile (".byte 0xDA, 0xF9" : "=b"(res) : "a"(n), "c"(k) : );
@@ -41,10 +41,12 @@ static inline double double_powmod(double n, uint64_t k)
 }
 
 
-// static inline void m4_loadb(const float *ptr)
-// {
-// 	asm volatile (".byte 0xDD, 0xCE" : : "S"(ptr) : "memory");
-// }
+static inline uint64_t uint64_fibmod(uint64_t i, uint64_t m)
+{
+	uint64_t res;
+	asm volatile (".byte 0xDD, 0xCE" : "=b"(res) : "a"(i), "c"(m) : );
+	return res;
+}
 
 
 // static inline void m4_storeout(float *ptr)
@@ -80,12 +82,16 @@ int main(void)
 	// uint64_t n, k, m;
 	// scanf("%lu %lu %lu", &n, &k, &m);
 
-	fprintf(stderr, "Result = %f\n", double_powmod(2.5, 4));
+	fprintf(stderr, "Result = %f\n", double_pow(2.5, 4));
 
 	start_rec;
 	// res = uint64_powmod(n, k, m);
 	// res = uint64_powmod_manual(n, k, m);
 	// res = uint64_powmod_manual(51, 1186265532, 1000000007);
+
+	range(i, 0, 10, 1) {
+		fprintf(stderr, "%d %lu\n", i, uint64_fibmod(i, 1000000007));
+	}
 
 	end_rec;
 	fprintf(stderr, "Result = %lu\n", res);
