@@ -17,6 +17,7 @@
 #include "cpu/exec_context.hh"
 #include <cstdint>
 #include <inttypes.h>
+#include <gmp.h>
 
 
 // This is the competitive programmer way
@@ -66,14 +67,13 @@ inline double double_pow(double n, uint64_t k) {
 	double base = n;
 
 	while (k) {
+		if (k&1) res*=base;
+		base *= base;
+		k>>=1;
+
 		// Cycle count test: do O(n) exponentiation
-		// if (k&1) res*=base;
-
-		// base *= base;
-		// k>>=1;
-
-		res *= n;
-		k--;
+		// res *= n;
+		// k--;
 	}
 
 	return res;

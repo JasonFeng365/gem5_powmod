@@ -1,3 +1,61 @@
+# gem5-powmod
+
+Adds microops for **binary exponentiation / powmod**: computing $n^k \mod m$ in $O(\log_2 n)$. Please see [benchmark.c](./benchmark.c) for example usage.
+
+## Microops
+
+| Microop | Description | Input | Output |
+|---|---|---|---|
+| UInt64Powmod | Computes $n^k \mod m$ in $O(\log_2 n)$ with unsigned integers | Three registers of raw input integers $n$, $k$, $m$ | One register of raw output integer |
+| DoublePow | Computes $n^k \mod m$ in $O(\log_2 n)$ with double $n$ and unsigned integer $k$ | Two registers of raw inputs double $n$, uint64 $k$ | One register of raw output double |
+| UInt64Fibmod | Finds the $i^{\text{th}}$ element of the Fibonacci sequence $\mod m$ in $O(\log_2 n)$| Two registers of raw input integers $i$, $m$ | One register of raw output integer |
+| UInt1024PowmodLoad| Loads $1024$-byte integers $n$, $k$, $m$ to compute $n^k \mod m$ | One register of a memory location of $1024*3=3072$ bytes | None |
+| UInt1024PowmodLoad| Stores the result of $1024$-byte integers $n$, $k$, $m$ computation of $n^k \mod m$ | One register of a memory location of $1024*3=3072$ bytes | None |
+
+```c
+static inline uint64_t uint64_powmod(uint64_t n, uint64_t k, uint64_t m)
+{
+	uint64_t res;
+	asm volatile (".byte 0xDA, 0xE0" : "=b"(res) : "a"(n), "c"(k), "d"(m) : );
+	return res;
+}
+
+
+static inline double double_pow(double n, uint64_t k)
+{
+	double res;
+	asm volatile (".byte 0xDA, 0xF9" : "=b"(res) : "a"(n), "c"(k) : );
+	return res;
+}
+
+
+static inline uint64_t uint64_fibmod(uint64_t i, uint64_t m)
+{
+	uint64_t res;
+	asm volatile (".byte 0xDD, 0xCE" : "=b"(res) : "a"(i), "c"(m) : );
+	return res;
+}
+```
+
+
+## Dependencies
+
+`gem5-powmod` relies on the `gmp` arbitrary-precision arithmetic library for exponentiation of large integers. Please install the library before building the repository. After installation, it should build properly without further configuration.
+
+```
+sudo apt update
+sudo apt install libgmp-dev
+```
+
+## Build
+
+```
+. x86build.sh
+```
+
+
+---
+
 # The gem5 Simulator
 
 This is the repository for the gem5 simulator. It contains the full source code

@@ -6,6 +6,7 @@
 #include <gem5/m5ops.h>
 // #include <cstdint>
 #include <inttypes.h>
+#include <gmp.h>
 
 
 #define start_rec m5_reset_stats(0, 0);
@@ -25,10 +26,7 @@ struct int32_state {
 static inline uint64_t uint64_powmod(uint64_t n, uint64_t k, uint64_t m)
 {
 	uint64_t res;
-	// fprintf(stderr, "Inside start_powmod_int32\n");
-	// asm volatile (".byte 0xDA, 0xE0" : : "a"(ptr) : "memory");
 	asm volatile (".byte 0xDA, 0xE0" : "=b"(res) : "a"(n), "c"(k), "d"(m) : );
-	// fprintf(stderr, "Result of start_powmod: %" PRIu64 "\n", res);
 	return res;
 }
 
@@ -89,12 +87,15 @@ int main(void)
 	// res = uint64_powmod_manual(n, k, m);
 	// res = uint64_powmod_manual(51, 1186265532, 1000000007);
 
-	range(i, 0, 10, 1) {
-		fprintf(stderr, "%d %lu\n", i, uint64_fibmod(i, 1000000007));
-	}
+	// range(i, 0, 10, 1) {
+	// 	fprintf(stderr, "%d %lu\n", i, uint64_fibmod(i, 1000000007));
+	// }
+
+	double d = double_pow(4, 1000);
 
 	end_rec;
 	fprintf(stderr, "Result = %lu\n", res);
+	fprintf(stderr, "Double = %lf\n", d);
 
 	fprintf(stderr, "Reached end of program\n");
 	return 0;
