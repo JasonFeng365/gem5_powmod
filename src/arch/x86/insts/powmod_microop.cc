@@ -49,17 +49,19 @@ inline int32_t int32_compute(int32_t n, int32_t k, int32_t m) {
 }
 
 inline uint64_t uint64_powmod(uint64_t n, uint64_t k, uint64_t m) {
-	uint64_t res = 1;
-	uint64_t base = n;
+	// uint64_t res = 1;
+	// uint64_t base = n;
 
-	while (k) {
-		if (k&1) res = (res*base) % m;
+	// while (k) {
+	// 	if (k&1) res = (res*base) % m;
 
-		base = (base*base) % m;
-		k>>=1;
-	}
+	// 	base = (base*base) % m;
+	// 	k>>=1;
+	// }
 
-	return res;
+	// return res;
+
+	return (n * k) % m;
 }
 
 inline double double_pow(double n, uint64_t k) {
